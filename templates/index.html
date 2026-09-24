@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Disease Prediction System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #1fa2ff 0%, #12d8fa 50%, #005bea 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #2c3e50;
+        }
+        header {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 50px;
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .logo {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo span {
+            font-weight: normal;
+            font-size: 13px;
+            opacity: 0.8;
+            margin-left: 5px;
+        }
+        nav {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        nav a {
+            text-decoration: none;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            padding-bottom: 2px;
+            transition: opacity 0.2s;
+        }
+        nav a:hover {
+            opacity: 0.75;
+        }
+        nav a.active-link {
+            font-weight: 600;
+            border-bottom: 2px solid #ffffff;
+        }
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 20px;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 35px 30px;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 650px;
+        }
+        .form-title-area {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #1a202c;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #718096;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: #2b6cb0;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #718096;
+            font-weight: 600;
+        }
+        .home-banner {
+            text-align: center;
+            background: linear-gradient(135deg, #f0fdf4 0%, #e6fffa 100%);
+            border: 1px solid #b2f5ea;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 20px;
+        }
+        .doctor-emoji {
+            font-size: 38px;
+            margin-bottom: 6px;
+        }
+        .table-container {
+            max-height: 280px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            background-color: #f7fafc;
+            color: #4a5568;
+            padding: 10px 12px;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #edf2f7;
+            color: #2d3748;
+        }
+        .badge-registered {
+            background-color: #c6f6d5;
+            color: #22543d;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #718096;
+            margin-bottom: 6px;
+        }
+        input, select {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #2d3748;
+            background-color: #f7fafc;
+            outline: none;
+        }
+        input:focus, select:focus {
+            border-color: #319795;
+            box-shadow: 0 0 0 3px rgba(49, 151, 149, 0.15);
+            background-color: #ffffff;
+        }
+        .row {
+            display: flex;
+            gap: 12px;
+        }
+        .row .form-group {
+            flex: 1;
+        }
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #2b6cb0 0%, #2c5282 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+        .submit-btn:hover {
+            opacity: 0.92;
+        }
+        .result-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            display: none;
+            font-weight: 600;
+        }
+        .success-banner {
+            background-color: #e6fffa;
+            border: 1px solid #b2f5ea;
+            color: #234e52;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span>🩺</span> MediPredict <span>| Multi-Disease System</span>
+        </div>
+        <nav>
+            <a onclick="switchTab('home', this)" class="active-link">Home</a>
+            <a onclick="switchTab('register', this)">Register</a>
+            <a onclick="switchTab('risk', this)">Check Risk</a>
+            <a onclick="switchTab('history', this)">History</a>
+        </nav>
+    </header>
+    <div class="main-wrapper">
+        <div class="container">
+            <!-- Home Tab -->
+            <div id="home" class="tab-content active">
+                <div class="home-banner">
+                    <div class="doctor-emoji">🏥</div>
+                    <h2 style="font-size: 18px; color: #234e52;">Welcome to Multi-Disease Prediction Dashboard</h2>
+                    <p class="subtitle" style="margin-top: 2px;"></p>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalPatientsCount">6</div>
+                        <div class="stat-label">Total Patients</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Diseases Tracked</div>
+                    </div> 
+                    <div class="stat-card">
+                        <div class="stat-number" style="color: #38a169;">Active</div>
+                        <div class="stat-label">System Status</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Tab -->
+            <div id="register" class="tab-content">
+                <div class="form-title-area">
+                    <h2>Patient Registration</h2>
+                    <p class="subtitle">Enter patient details to save into the system</p>
+                </div>
+                
+                <div id="successBanner" class="success-banner">Patient registered successfully!</div>
+
+                <div class="form-group">
+                    <label>Patient ID</label>
+                    <input type="text" id="regId" placeholder="e.g. PT-2026-007" value="PT-2026-007">
+                </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="regName" placeholder="Kumar Vishwanadh">
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="regAge" min="0" value="25">
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="regGender">
+                        <option value="Male" selected>Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <button class="submit-btn" onclick="registerPatient()">Register Patient</button>
+            </div>
+
+            <!-- Risk Assessment Tab -->
+            <div id="risk" class="tab-content">
+                <div class="form-title-area">
+                    <h2>Risk Assessment</h2>
+                    <p class="subtitle">Evaluate health indicators for High Risk, Low Risk, or Normal status</p>
+                </div>
+                
+                <div class="form-group">
+                    <label>Patient ID</label>
+                    <input type="text" id="patientId" placeholder="Enter Patient ID (e.g. PT-2026-001)" value="PT-2026-001">
+                </div>
+
+                <div class="form-group">
+                    <label>Select Disease Category</label>
+                    <select id="diseaseSelect" onchange="toggleDiseaseFields()">
+                        <option value="Kidney Disease">Kidney Disease</option>
+                        <option value="Cardiovascular Disease">Cardiovascular Disease</option>
+                        <option value="Fever Assessment">Fever Assessment</option>
+                        <option value="Diabetes">Diabetes</option>
+                    </select>
+                </div>
+
+                <!-- Kidney Fields -->
+                <div id="kidneyFields" class="row">
+                    <div class="form-group">
+                        <label>Creatinine</label>
+                        <input type="number" id="creatinine" placeholder="mg/dL" step="0.1" value="1.2">
+                    </div>
+                    <div class="form-group">
+                        <label>Urea</label>
+                        <input type="number" id="urea" placeholder="mg/dL" step="0.1" value="40">
+                    </div>
+                </div>
+
+                <!-- Cardio Fields -->
+                <div id="cardioFields" class="row" style="display: none;">
+                    <div class="form-group">
+                        <label>Blood Pressure</label>
+                        <input type="number" id="bp" placeholder="mmHg" value="120">
+                    </div>
+                    <div class="form-group">
+                        <label>Cholesterol</label>
+                        <input type="number" id="cholesterol" placeholder="mg/dL" value="200">
+                    </div>
+                </div>
+
+                <!-- Fever Fields -->
+                <div id="feverFields" class="row" style="display: none;">
+                    <div class="form-group">
+                        <label>Body Temperature (°F)</label>
+                        <input type="number" id="temperature" placeholder="e.g. 101.5" step="0.1" value="98.6">
+                    </div>
+                </div>
+
+                <!-- Diabetes Fields -->
+                <div id="diabetesFields" class="row" style="display: none;">
+                    <div class="form-group">
+                        <label>Blood Glucose</label>
+                        <input type="number" id="glucose" placeholder="mg/dL" value="100">
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="runCheck()">Run Risk Analysis</button>
+                
+                <div id="resultBox" class="result-box">
+                    Result Status: <span id="riskText">Pending Analysis</span>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history" class="tab-content">
+                <div class="form-title-area">
+                    <h2>Registered Patients Directory</h2>
+                    <p class="subtitle" id="historySubtitle">Showing active patient profiles</p>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Patient ID</th>
+                                <th>Full Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="patientTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    let patientsList = [
+        ["PT-2026-001", "Pradeep Sahu", 45, "Male"],
+        ["PT-2026-002", "Varsha Rai", 38, "Female"],
+        ["PT-2026-003", "Pradeep Kumar", 52, "Male"],
+        ["PT-2026-004", "Bhargavi Ramesh", 29, "Female"],
+        ["PT-2026-005", "Mahendra Rao", 61, "Male"],
+        ["PT-2026-006", "Karthik Ram", 41, "Female"]
+    ];
+
+    window.onload = function() {
+        renderTable();
+    };
+
+    function renderTable() {
+        const tbody = document.getElementById('patientTableBody');
+        tbody.innerHTML = "";
+
+        patientsList.forEach(patient => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${patient[0]}</td>
+                <td>${patient[1]}</td>
+                <td>${patient[2]}</td>
+                <td>${patient[3]}</td>
+                <td><span class="badge-registered">Registered</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('totalPatientsCount').innerText = patientsList.length;
+        document.getElementById('historySubtitle').innerText = `Showing ${patientsList.length} active patient profiles in the system`;
+    }
+
+    function registerPatient() {
+        const id = document.getElementById('regId').value.trim();
+        const name = document.getElementById('regName').value.trim();
+        const age = document.getElementById('regAge').value.trim();
+        const gender = document.getElementById('regGender').value;
+
+        if (!id || !name || age === "") {
+            alert("Please fill in all patient details.");
+            return;
+        }
+
+        patientsList.push([id, name, parseInt(age), gender]);
+        renderTable();
+
+        const successBanner = document.getElementById('successBanner');
+        successBanner.style.display = 'block';
+        
+        setTimeout(() => {
+            successBanner.style.display = 'none';
+            switchTab('history', document.querySelectorAll('nav a')[3]);
+        }, 1200);
+    }
+
+    function switchTab(tabId, element) {
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.getElementById(tabId).classList.add('active');
+        document.querySelectorAll('nav a').forEach(link => {
+            link.classList.remove('active-link');
+        });
+        if (element) {
+            element.classList.add('active-link');
+        }
+    }
+
+    function toggleDiseaseFields() {
+        const selected = document.getElementById('diseaseSelect').value;
+        document.getElementById('kidneyFields').style.display = 'none';
+        document.getElementById('cardioFields').style.display = 'none';
+        document.getElementById('feverFields').style.display = 'none';
+        document.getElementById('diabetesFields').style.display = 'none';
+
+        if (selected === 'Kidney Disease') {
+            document.getElementById('kidneyFields').style.display = 'flex';
+        } else if (selected === 'Cardiovascular Disease') {
+            document.getElementById('cardioFields').style.display = 'flex';
+        } else if (selected === 'Fever Assessment') {
+            document.getElementById('feverFields').style.display = 'flex';
+        } else if (selected === 'Diabetes') {
+            document.getElementById('diabetesFields').style.display = 'flex';
+        }
+    }
+
+    function runCheck() {
+        const patient_id = document.getElementById('patientId').value.trim();
+        const disease = document.getElementById('diseaseSelect').value;
+
+        if (!patient_id) {
+            alert("Please enter a Patient ID.");
+            return;
+        }
+
+        let risk = "Normal";
+
+        if (disease === 'Kidney Disease') {
+            const creatinine = parseFloat(document.getElementById('creatinine').value) || 0;
+            const urea = parseFloat(document.getElementById('urea').value) || 0;
+            if (creatinine > 1.5 || urea > 50) {
+                risk = "High Risk";
+            } else if (creatinine > 1.2 || urea > 40) {
+                risk = "Low Risk";
+            }
+        } else if (disease === 'Cardiovascular Disease') {
+            const bp = parseFloat(document.getElementById('bp').value) || 0;
+            const cholesterol = parseFloat(document.getElementById('cholesterol').value) || 0;
+            if (bp > 140 || cholesterol > 240) {
+                risk = "High Risk";
+            } else if (bp > 130 || cholesterol > 200) {
+                risk = "Low Risk";
+            }
+        } else if (disease === 'Fever Assessment') {
+            const temperature = parseFloat(document.getElementById('temperature').value) || 98.6;
+            if (temperature > 102.0) {
+                risk = "High Risk";
+            } else if (temperature > 99.5) {
+                risk = "Low Risk";
+            }
+        } else if (disease === 'Diabetes') {
+            const glucose = parseFloat(document.getElementById('glucose').value) || 0;
+            if (glucose > 140) {
+                risk = "High Risk";
+            } else if (glucose > 110) {
+                risk = "Low Risk";
+            }
+        }
+
+        const resultBox = document.getElementById('resultBox');
+        const riskText = document.getElementById('riskText');
+        
+        resultBox.style.display = 'block';
+        riskText.innerText = risk;
+
+        if (risk === "High Risk") {
+            resultBox.style.backgroundColor = "#fff5f5";
+            resultBox.style.color = "#c53030";
+            resultBox.style.border = "1px solid #feb2b2";
+        } else if (risk === "Low Risk") {
+            resultBox.style.backgroundColor = "#fffaf0";
+            resultBox.style.color = "#c05621";
+            resultBox.style.border = "1px solid #fbd38d";
+        } else {
+            resultBox.style.backgroundColor = "#f0fff4";
+            resultBox.style.color = "#22543d";
+            resultBox.style.border = "1px solid #c6f6d5";
+        }
+    }
+</script>
+</body>
+</html>
