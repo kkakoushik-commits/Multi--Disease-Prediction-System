@@ -1,5 +1,5 @@
 from Cardio_module import CardioChecker
-from database import init_db, save_patient, save_prediction, get_connection
+from database import init_db, add_patient, save_prediction, get_connection
 from diabetes_module import DiabetesChecker
 from fever_module import FeverChecker
 from Kidney_module import KidneyChecker
@@ -60,7 +60,7 @@ def main():
       if not db_patient:
         print("Error: Patient ID not found. Please register first.")
       else:
-        patient_name = db_patient["name"]
+        patient_name = db_patient[1]
         print(f"Running assessment for: {patient_name}")
 
         print("\nSelect Disease Module:")
@@ -125,10 +125,10 @@ def main():
         print("Error: Patient ID not found.")
       else:
         print(f"\nPatient Details:")
-        print(f"ID: {db_patient['id']}")
-        print(f"Name: {db_patient['name']}")
-        print(f"Age: {db_patient['age']}")
-        print(f"Gender: {db_patient['gender']}")
+        print(f"ID: {db_patient[0]}")
+        print(f"Name: {db_patient[1]}")
+        print(f"Age: {db_patient[2]}")
+        print(f"Gender: {db_patient[3]}")
 
         cursor.execute(
             "SELECT disease_type, input_data, result, prediction_date FROM"
