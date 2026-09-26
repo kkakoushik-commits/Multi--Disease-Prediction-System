@@ -43,6 +43,19 @@ def predict_fever(data):
         }
 
 class FeverChecker:
+    def __init__(self, temp, duration):
+        self.temp = temp
+        self.duration = duration
+
+    def analyze(self):
+        # Passes the instantiated values into a dictionary format for your existing prediction logic
+        data = {
+            "temperature": self.temp,
+            "duration": self.duration
+        }
+        result_dict = predict_fever(data)
+        return f"{result_dict['risk_level']}: {result_dict['message']}"
+
     @staticmethod
     def check_fever(data):
         return predict_fever(data)
